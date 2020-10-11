@@ -1,86 +1,52 @@
 package contacts;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Optional;
 
-public class Contact implements Serializable {
-    private static final long serialVersionUID = 1L;
-    protected String phone;
-    private LocalDateTime timeCreated;
-    private LocalDateTime timeLastEdited;
-    private final ContactType type;
+abstract class Contact implements Serializable {
+    protected HashMap<String, Object> values;
+    protected HashMap<String, FieldSpec> spec;
 
-    public Contact(ContactType type) {
-        this.type = type;
+    public Contact() {
+        this.spec = new HashMap<>();
+        spec.putAll(ContactFieldSpecs.spec);
+        this.values = new LinkedHashMap<>();
     }
 
-    private static final Pattern javaPattern = Pattern.compile("\\+?([\\d[a-z][A-Z]]+([\\u0020\\-]\\([\\d[a-z][A-Z]]{2,}\\))?([\\u0020\\-][\\d[a-z][A-Z]]{2,})*|\\([\\d[a-z][A-Z]]{2,}\\)([\\u0020\\-][\\d[a-z][A-Z]]{2,})*)");
+    public abstract String[] getAlterableFieldNames();
 
-    public void setTimeCreated(LocalDateTime timeCreated) {
-        this.timeCreated = timeCreated;
+    public abstract String getShortInfo();
+
+    public Optional<String> setValue(String fieldName, Object value) {
+        if (!spec.containsKey(fieldName)) {
+            throw new IllegalStateException("Field " + fieldName + " does not exist for " + this.getClass().toString() );
+        }
+        Optional<String> result = spec.get(fieldName).validate.apply(value);
+        if (result.isEmpty()) {
+            values.put(fieldName, value);
+        }
+        return result;
     }
 
-    public LocalDateTime getTimeCreated() {
-        return timeCreated;
+    public Object getValue(String fieldName) {
+        if (!spec.containsKey(fieldName)) {
+            throw new IllegalStateException("Field " + fieldName + " does not exist for " + this.getClass().toString() );
+        }
+        return values.getOrDefault(fieldName, spec.get(fieldName).defaultValue);
     }
 
-    public LocalDateTime getTimeLastEdited() {
-        return timeLastEdited;
+    public HashMap<String, Object> getValueMap() {
+        return values;
     }
 
-    public void setTimeLastEdited(LocalDateTime timeLastEdited) {
-        this.timeLastEdited = timeLastEdited;
+    public FieldSpec getFieldSpec(String fieldName) {
+        return spec.get(fieldName);
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public boolean setPhone(String number) {
-        if (isValidPhone(number)) {
-            this.phone = number;
-            return true;
-        } else this.phone = null;
-        return false;
-    }
-
-    private static boolean isValidPhone(String number) {
-        Matcher matcher = javaPattern.matcher(number);
-        return matcher.matches();
-    }
-
-    public ContactType getType() {
-        return type;
+    public HashMap<String, FieldSpec>  getFieldSpecs() {
+        return spec;
     }
 }
 
-class Organization extends Contact {
-    private static final long serialVersionUID = 1L;
-    private String organizationName;
-    private String address;
-    public final ContactType type = ContactType.ORGANIZATION;
-
-    public Organization() {
-        super(ContactType.ORGANIZATION);
-    }
-
-    public String getOrganizationName() {
-        return organizationName;
-    }
-
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-}
