@@ -2,7 +2,6 @@ package contacts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 
 public class MenuFactory {
     public static HashMap<String, MenuItem> getMenu(Context context) {

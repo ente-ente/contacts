@@ -12,5 +12,4 @@ public class Main {
         Context.INSTANCE.currentPhoneBook = phonebook;
         Menu.INSTANCE.run(Context.INSTANCE);
     }
-
 }

@@ -85,6 +85,7 @@ public final class MenuHelpers {
             fieldToEdit = Dialogues.INSTANCE.getFieldToEdit(alterableFields);
         }
         contact.setValue(fieldToEdit, Dialogues.INSTANCE.newFieldValue(fieldToEdit));
+        contact.setValue("timeEdited", LocalDateTime.now());
         System.out.println("Saved");
 
         return showRecord(context);
@@ -143,9 +144,13 @@ public final class MenuHelpers {
         o.currentContact = null;
         String type = Dialogues.INSTANCE.getType();
         if (type.equals("person")) {
-            o.currentContact = ContactFactory.createPerson();
+            PersonBuilder builder = new PersonBuilder();
+            builder.setFields(PersonFieldSpecs.alterableFields, PersonFieldSpecs.spec);
+            o.currentContact = builder.build();
         } else if (type.equals("organization")) {
-            o.currentContact = ContactFactory.createOrganization();
+            OrganizationBuilder builder = new OrganizationBuilder();
+            builder.setFields(OrganizationFieldSpecs.alterableFields, OrganizationFieldSpecs.spec);
+            o.currentContact = builder.build();
         }
         if (o.currentContact != null) {
             o.currentPhoneBook.addContact(o.currentContact);

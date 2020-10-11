@@ -36,7 +36,7 @@ public enum Dialogues {
     }
 
     public String getFieldToEdit(String[] alterableFields) {
-        System.out.println("Select a field (" + String.join(", ", alterableFields) + ": ");
+        System.out.println("Select a field (" + String.join(", ", alterableFields) + "): ");
         return scanner.nextLine().trim();
     }
 

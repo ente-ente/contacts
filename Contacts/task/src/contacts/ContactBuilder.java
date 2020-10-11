@@ -1,6 +1,7 @@
 package contacts;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Optional;
 
 public abstract class ContactBuilder<T extends Contact> {
@@ -26,5 +27,15 @@ public abstract class ContactBuilder<T extends Contact> {
         result.setValue("timeCreated", LocalDateTime.now());
         result.setValue("timeEdited", result.getValue("timeCreated"));
         return result;
+    }
+
+    public void setFields(String[] alterableFields, HashMap<String, FieldSpec> spec) {
+        for (String field : alterableFields) {
+            try {
+                withField(field, Dialogues.INSTANCE.getValue(spec.get(field).displayNameIn));
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }
