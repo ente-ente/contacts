@@ -11,7 +11,7 @@ public class FieldSpec implements Serializable {
     public FieldSpec(String name, String displayNameIn, String displayNameOut, String defaultValue, SerializableFunction<Object, Optional<String>> validate) {
         this.name = name;
         this.displayNameIn = displayNameIn;
-        this.displayNameOut = "".equals(displayNameOut) ? displayNameOut : displayNameIn;
+        this.displayNameOut = "".equals(displayNameOut) ? displayNameIn : displayNameOut;
         this.defaultValue = defaultValue;
         this.validate = validate;
     }

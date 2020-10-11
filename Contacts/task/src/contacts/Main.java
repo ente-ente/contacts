@@ -4,9 +4,11 @@ import java.util.Optional;
 public class Main {
 
     public static void main(String[] args) {
-        Optional<String> fileName = args.length > 0 ? Optional.of(args[0]) : Optional.empty();
+        String fileName = args.length > 0 ? args[0] : "";
         PhoneBook phonebook = PhoneBook.openPhoneBook(fileName);
-        fileName.ifPresent(fn -> System.out.println("open " + fn));
+        if (!"".equals(fileName)) {
+            System.out.println("open " + fileName);
+        }
         Context.INSTANCE.currentPhoneBook = phonebook;
         Menu.INSTANCE.run(Context.INSTANCE);
     }
